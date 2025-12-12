@@ -1,0 +1,58 @@
+name: Update GitHub Stats
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight UTC
+  workflow_dispatch:  # Allow manual trigger from Actions tab
+  push:
+    branches:
+      - main  # Run on push to main branch
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout stats repo
+        uses: actions/checkout@v3
+        with:
+          repository: susovanpatra00/my-stats-repository
+          token: ${{ secrets.PAT_TOKEN }}
+          path: stats-repo
+
+      - name: Checkout profile repo
+        uses: actions/checkout@v3
+        with:
+          repository: susovanpatra00/susovanpatra00
+          token: ${{ secrets.PAT_TOKEN }}
+          path: profile-repo
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Generate stats
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          cd stats-repo
+          python github_stats.py > output.txt
+          cat output.txt
+
+      - name: Extract stats and update README
+        run: |
+          cd stats-repo
+          python update_readme.py
+
+      - name: Commit and push to profile repo
+        run: |
+          cd profile-repo
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git add README.md
+          git diff --quiet && git diff --staged --quiet || (git commit -m "📊 Auto-update GitHub stats" && git push)
