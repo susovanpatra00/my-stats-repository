@@ -36,14 +36,6 @@ jobs:
         run: |
           pip install requests
 
-      - name: Generate stats
-        env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          cd stats-repo
-          python github_stats.py > output.txt
-          cat output.txt
-
       - name: Extract stats and update README
         run: |
           cd stats-repo
