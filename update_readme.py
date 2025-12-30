@@ -67,8 +67,7 @@ reviews = stats["totalPullRequestReviewContributions"]
 issues = stats["totalIssueContributions"]
 
 # ================= README SECTION =================
-stats_section = f"""## 📊 GitHub Stats
-
+stats_section = f"""
 <div align="center">
 
 ### 📈 Contribution Statistics ({year})
@@ -93,25 +92,31 @@ stats_section = f"""## 📊 GitHub Stats
 *Last updated: {datetime.utcnow().strftime('%B %d, %Y at %H:%M UTC')}*
 """
 
+
 # ================= UPDATE README =================
 readme_path = "../profile-repo/README.md"
 
 with open(readme_path, "r", encoding="utf-8") as f:
     content = f.read()
 
-start_marker = "## 📊 GitHub Stats"
-end_marker = "---"
+start_marker = "<!-- GITHUB_STATS_START -->"
+end_marker = "<!-- GITHUB_STATS_END -->"
 
 start = content.find(start_marker)
+end = content.find(end_marker)
 
-if start == -1:
-    raise RuntimeError("❌ Stats section not found in README")
+if start == -1 or end == -1:
+    raise RuntimeError("❌ GitHub stats markers not found in README")
 
-end = content.find(end_marker, start)
-if end == -1:
-    raise RuntimeError("❌ End marker '---' not found")
+end += len(end_marker)
 
-new_content = content[:start] + stats_section + "\n\n" + content[end:]
+new_content = (
+    content[:start]
+    + f"{start_marker}\n\n## 📊 GitHub Stats\n\n"
+    + stats_section
+    + f"\n\n{end_marker}"
+    + content[end:]
+)
 
 with open(readme_path, "w", encoding="utf-8") as f:
     f.write(new_content)
