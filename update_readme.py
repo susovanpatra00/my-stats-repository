@@ -82,7 +82,7 @@ stats_section = f"""
 <br/>
 
 ### 🔥 Current Streak
-<img src="https://github-readme-streak-stats.herokuapp.com/?user={USERNAME}&theme=tokyonight" alt="GitHub Streak"/>
+<img src="https://github-readme-streak-stats.herokuapp.com/?user={USERNAME}&theme=tokyonight&hide_border=true&cache_seconds=21600"/>
 
 ### 📊 Language Distribution
 <img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username={USERNAME}&layout=compact&langs_count=8&theme=tokyonight"/>
